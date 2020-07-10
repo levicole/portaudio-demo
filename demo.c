@@ -1,18 +1,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include <sndfile.h>
 #include <portaudio.h>
 
 #define SAMPLE_RATE 44100
 #define NUM_SECONDS 3
 
-typedef struct
-{
-    float left_phase;
-    float right_phase;
-}
-paTestData;
+typedef struct {
+    SNDFILE *file;
+    SF_INFO info;
+} callback_data;
 
 static int patestCallBack( const void *inputBuffer, void *outputBuffer,
                             unsigned long framesPerBuffer,
@@ -20,20 +19,17 @@ static int patestCallBack( const void *inputBuffer, void *outputBuffer,
                             PaStreamCallbackFlags statusFlags,
                             void *userData)
 {
-    paTestData *data = (paTestData*)userData;
-    float *out = (float*)outputBuffer;
-    unsigned int i;
+    float *out;
+    int sample_count;
+    callback_data *data = (callback_data*)userData;
+    out = (float*)outputBuffer;
     (void) inputBuffer;
 
-    for (i = 0; i < framesPerBuffer; i++)
-    {
-        *out++ = data->left_phase;
-        *out++ = data->right_phase;
-        data->left_phase += 0.01f;
-        if (data->left_phase >= 1.0f) data->left_phase -= 2.0f;
-
-        data->right_phase += 0.03f;
-        if (data->right_phase >= 1.0f) data->right_phase -= 2.0f;
+    // this doesn't seem necessary but I guess it's a good idea to zero it out?
+    memset(out, 0, sizeof(float) * framesPerBuffer * data->info.channels);
+    sample_count = sf_read_float(data->file, out, framesPerBuffer * data->info.channels);
+    if (sample_count < framesPerBuffer) {
+        return paComplete;
     }
     return 0;
 }
@@ -42,32 +38,29 @@ static int patestCallBack( const void *inputBuffer, void *outputBuffer,
 int main(void)
 {
     SNDFILE *soundFile;
-    SF_INFO info;
     PaError err;
     PaStream *stream;
-    static paTestData data;
+    callback_data data;
 
-    memset (&info, 0, sizeof (info)) ;
+    srand((unsigned int)time(NULL));
 
-    soundFile = sf_open("./rhodes.wav", SFM_READ, &info);
-    printf("channels: %d, samplerate: %d\r\n", info.channels, info.samplerate);
+    soundFile = sf_open("./rhodes.wav", SFM_READ, &data.info);
+    printf("channels: %d, samplerate: %d\r\n", data.info.channels, data.info.samplerate);
+    data.file = soundFile;
 
     err = Pa_Initialize();
     if (err != paNoError) goto error;
 
-    err = Pa_OpenDefaultStream(&stream,
-                               0,
-                               2,
-                               paFloat32,
-                               SAMPLE_RATE,
-                               256,
-                               patestCallBack,
-                               &data);
+    err = Pa_OpenDefaultStream(&stream, 0, 2, paFloat32, SAMPLE_RATE, 256, patestCallBack, &data);
     if (err != paNoError) goto error;
 
     err = Pa_StartStream(stream);
     if (err != paNoError) goto error;
-    Pa_Sleep(NUM_SECONDS * 1000);
+
+    while((err=Pa_IsStreamActive(stream)) == 1)
+    {
+        Pa_Sleep(100);
+    }
 
     Pa_StopStream(stream);
     if (err != paNoError) goto error;
