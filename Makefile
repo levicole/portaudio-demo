@@ -6,11 +6,11 @@ LFLAGS = -L/usr/local/lib
 
 LIBS = -lsndfile -lportaudio
 
-SRCS = hello-sine.c
+SRCS = demo.c
 
 OBJS = $(SRCS:.c=.o)
 
-MAIN=hello-sine
+MAIN=demo
 
 all: $(MAIN)
 
