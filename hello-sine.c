@@ -1,31 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
 #include <sndfile.h>
 #include <portaudio.h>
 
 #define SAMPLE_RATE 44100
 #define NUM_SECONDS 3
-#define NUM_SAMPLES (NUM_SECONDS * SAMPLE_RATE)
-#define PI 3.141592625
-#define FREQUENCY 440
-
-void generate_sine(float *samples, int length);
-float sine_sample(int sample);
-
-void generate_sine(float *samples, int length)
-{
-    for (int j = 0; j < length; j++)
-    {
-        samples[j] =  (float) sine_sample(j);
-    }
-}
-
-float sine_sample(int sample)
-{
-    return sin(2 * PI * FREQUENCY * sample / SAMPLE_RATE);
-}
 
 typedef struct
 {
