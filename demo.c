@@ -42,8 +42,6 @@ int main(void)
     PaStream *stream;
     callback_data data;
 
-    srand((unsigned int)time(NULL));
-
     soundFile = sf_open("./rhodes.wav", SFM_READ, &data.info);
     printf("channels: %d, samplerate: %d\r\n", data.info.channels, data.info.samplerate);
     data.file = soundFile;
