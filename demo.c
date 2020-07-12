@@ -21,6 +21,7 @@ static int patestCallBack( const void *inputBuffer, void *outputBuffer,
 {
     float *out;
     int sample_count;
+    int remaining_samples;
     callback_data *data = (callback_data*)userData;
     out = (float*)outputBuffer;
     (void) inputBuffer;
@@ -28,8 +29,10 @@ static int patestCallBack( const void *inputBuffer, void *outputBuffer,
     // this doesn't seem necessary but I guess it's a good idea to zero it out?
     memset(out, 0, sizeof(float) * framesPerBuffer * data->info.channels);
     sample_count = sf_read_float(data->file, out, framesPerBuffer * data->info.channels);
-    if (sample_count < framesPerBuffer) {
-        return paComplete;
+    remaining_samples = (framesPerBuffer * data->info.channels) - sample_count;
+    if (remaining_samples > 0) {
+        sf_seek(data->file, 0, SEEK_SET);
+        sf_read_float(data->file, (out + sample_count), remaining_samples);
     }
     return 0;
 }
@@ -55,10 +58,8 @@ int main(void)
     err = Pa_StartStream(stream);
     if (err != paNoError) goto error;
 
-    while((err=Pa_IsStreamActive(stream)) == 1)
-    {
-        Pa_Sleep(100);
-    }
+    char foo[10];
+    gets(foo);
 
     Pa_StopStream(stream);
     if (err != paNoError) goto error;
