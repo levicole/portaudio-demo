@@ -1,2 +1,2 @@
 *.o
-demo
+build/demo

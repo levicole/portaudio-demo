@@ -1,16 +1,16 @@
 CC = gcc
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -Wextra -Isrc
 
 INCLUDES = -I/usr/local/include
 LFLAGS = -L/usr/local/lib
 
-LIBS = -lsndfile -lportaudio
+LIBS = -lsndfile -lportaudio -lreadline
 
-SRCS = demo.c
+SRCS=$(wildcard src/**/*.c src/*.c)
 
 OBJS = $(SRCS:.c=.o)
 
-MAIN=demo
+MAIN=build/demo
 
 all: $(MAIN)
 
@@ -18,4 +18,4 @@ $(MAIN): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
 
 clean:
-	$(RM) *.o *~ $(MAIN)
+	$(RM) $(OBJS) $(MAIN)
