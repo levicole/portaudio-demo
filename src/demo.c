@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "player/player.h"
+#include "gui/gui.h"
 
 #define SAMPLE_RATE 44100
 #define NUM_SECONDS 3
@@ -30,6 +31,15 @@ static int player_cb( const void *inputBuffer, void *outputBuffer,
     return 0;
 }
 
+void build_gui(struct nk_context *ctx, void *userData) {
+    Player *player = (Player*)userData;
+
+    // if (nk_begin(ctx, "Audio Player", nk_rect(50,50,230,250), DEFAULT_WINDOW_MASK))
+    // {
+
+    // }
+
+}
 
 int main(void)
 {
@@ -44,8 +54,7 @@ int main(void)
     Player_start(player);
 
     // block main thread so the audio player continues to loop.
-    char foo[10];
-    gets(foo);
+    init_nuklear_gui(build_gui, player);
 
     Player_stop(player);
     Player_free(player);
