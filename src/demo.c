@@ -35,19 +35,19 @@ int main(void)
 {
     Player *player;
 
-    player = init_Player("./rhodes.wav", player_cb);
+    player = Player_init("./rhodes.wav", player_cb);
     if (player == NULL) {
         printf("error initializing audio player");
         exit(1);
     }
 
-    start_Player(player);
+    Player_start(player);
 
     // block main thread so the audio player continues to loop.
     char foo[10];
     gets(foo);
 
-    stop_Player(player);
-    free_Player(player);
+    Player_stop(player);
+    Player_free(player);
     return 0;
 }

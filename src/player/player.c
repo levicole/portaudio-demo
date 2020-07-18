@@ -3,7 +3,7 @@
 
 void _die(Player *player, const char *message);
 
-Player *init_Player(const char *file_name, PaStreamCallback cb)
+Player *Player_init(const char *file_name, PaStreamCallback cb)
 {
     Player *player;
     if((player = malloc(sizeof(Player))) == NULL) return NULL;
@@ -32,17 +32,17 @@ Player *init_Player(const char *file_name, PaStreamCallback cb)
     return player;
 };
 
-void start_Player(Player *player) {
+void Player_start(Player *player) {
     PaError err;
     err = Pa_StartStream(player->stream);
     if (err != paNoError) {
         printf("Error starting the player: %s\r\n", Pa_GetErrorText(err));
-        free_Player(player);
+        Player_free(player);
         exit(1);
     }
 }
 
-void stop_Player(Player *player) {
+void Player_stop(Player *player) {
     PaError err;
     err = Pa_StopStream(player->stream);
     if (err != paNoError) _die(player, Pa_GetErrorText(err));
@@ -52,7 +52,7 @@ void stop_Player(Player *player) {
     if (err != paNoError) _die(player, Pa_GetErrorText(err));
 }
 
-void free_Player(Player *player)
+void Player_free(Player *player)
 {
     sf_close(player->file);
     free(player);
@@ -61,6 +61,6 @@ void free_Player(Player *player)
 void _die(Player *player, const char *message)
 {
     printf("Error: %s\r\n", message);
-    free_Player(player);
+    Player_free(player);
     exit(1);
 }

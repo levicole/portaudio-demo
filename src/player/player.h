@@ -14,9 +14,9 @@ typedef struct {
     PaStream *stream;
 } Player;
 
-Player *init_Player(const char *file_name, PaStreamCallback cb);
-void start_Player(Player *player);
-void stop_Player(Player *player);
-void free_Player(Player *player);
+Player *Player_init(const char *file_name, PaStreamCallback cb);
+void Player_start(Player *player);
+void Player_stop(Player *player);
+void Player_free(Player *player);
 
 #endif
