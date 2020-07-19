@@ -12,6 +12,7 @@ typedef struct {
     SNDFILE *file;
     SF_INFO info;
     PaStream *stream;
+    float volume;
 } Player;
 
 Player *Player_init(const char *file_name, PaStreamCallback cb);

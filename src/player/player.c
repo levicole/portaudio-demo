@@ -11,6 +11,7 @@ Player *Player_init(const char *file_name, PaStreamCallback cb)
     SNDFILE *soundFile;
     PaError err;
 
+    player->volume = 1.0f;
 
     soundFile = sf_open(file_name, SFM_READ, &player->info);
     player->file = soundFile;

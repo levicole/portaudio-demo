@@ -9,8 +9,8 @@
 #define NK_SDL_GL2_IMPLEMENTATION
 #define NK_IMPLEMENTATION
 
-#include "includes/nuklear.h"
-#include "includes/nuklear_sdl_gl2.h"
+#include "../includes/nuklear.h"
+#include "../includes/nuklear_sdl_gl2.h"
 #ifndef WINDOW_WIDTH
 #define WINDOW_WIDTH 1200
 #endif
@@ -66,7 +66,7 @@ void init_nuklear_gui(gui_cb cb, void *userData)
             nk_sdl_handle_event(&evt);
         }
 
-        cb(ctx);
+        cb(ctx, userData);
 
         SDL_GetWindowSize(win, &win_width, &win_height);
         glViewport(0, 0, win_width, win_height);
