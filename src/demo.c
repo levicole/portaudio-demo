@@ -53,9 +53,32 @@ static int player_cb( const void *inputBuffer, void *outputBuffer,
 
 void build_gui(struct nk_context *ctx, void *userData) {
     Player *player = (Player*)userData;
+    char *buttonLabel;
+
+    if (player->state == PLAYING)
+    {
+        buttonLabel = "Pause";
+    }
+    else
+    {
+        buttonLabel = "Play";
+    }
+    
 
     if (nk_begin(ctx, "Audio Player", nk_rect(50,50,100,100), DEFAULT_WINDOW_MASK))
     {
+        nk_layout_row_static(ctx, 20, 80, 1);
+        if (nk_button_label(ctx, buttonLabel))
+        {
+            if (player->state == PLAYING) {
+                Player_pause(player);
+            }
+            else
+            {
+                Player_start(player);
+            }
+        }
+
         nk_layout_row_static(ctx, 20, 80, 1);
         nk_label(ctx, "Volume", NK_TEXT_LEFT);
 
@@ -75,8 +98,6 @@ int main(void)
         printf("error initializing audio player");
         exit(1);
     }
-
-    Player_start(player);
 
     // block main thread so the audio player continues to loop.
     init_nuklear_gui(build_gui, player);

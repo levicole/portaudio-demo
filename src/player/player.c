@@ -12,6 +12,7 @@ Player *Player_init(const char *file_name, PaStreamCallback cb)
     PaError err;
 
     player->volume = 1.0f;
+    player->state  = PAUSED;
 
     soundFile = sf_open(file_name, SFM_READ, &player->info);
     player->file = soundFile;
@@ -41,6 +42,14 @@ void Player_start(Player *player) {
         Player_free(player);
         exit(1);
     }
+    player->state = PLAYING;
+}
+
+void Player_pause(Player *player) {
+    PaError err;
+    err = Pa_StopStream(player->stream);
+    if (err != paNoError) _die(player, Pa_GetErrorText(err));
+    player->state = PAUSED;
 }
 
 void Player_stop(Player *player) {
